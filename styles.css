@@ -1,0 +1,687 @@
+/* =================================================================
+   SISTEMA DE ESTILOS - ATARDECER, RAMO DE FLORES Y CARTA INTERACTIVA
+   ================================================================= */
+
+:root {
+    /* Paleta de Atardecer */
+    --sky-top: #1a0b2e;
+    --sky-mid: #4a154b;
+    --sky-horizon: #ff5e36;
+    --sun-gold: #ffbe0b;
+    --sun-amber: #fb5607;
+    --sun-glow: rgba(255, 190, 11, 0.4);
+    
+    /* Colores de Flores y Ramo */
+    --sunflower-yellow: #ffcc00;
+    --rose-red: #e63946;
+    --tulip-pink: #ff4d6d;
+    --tulip-purple: #c77dff;
+    --stem-green: #2d6a4f;
+    --ribbon-red: #d90429;
+    --wrapper-craft: #d4a373;
+
+    /* Sobre y Carta */
+    --envelope-color: #fdf0d5;
+    --envelope-shadow: rgba(0, 0, 0, 0.35);
+    --wax-seal-red: #9e2a2b;
+    --paper-bg: #fffdf5;
+    --text-primary: #2b1e1a;
+    --text-secondary: #7f5539;
+    --accent-gold: #d4af37;
+
+    /* Fuentes */
+    --font-handwriting: 'Great Vibes', cursive;
+    --font-script: 'Dancing Script', cursive;
+    --font-title: 'Playfair Display', serif;
+    --font-body: 'Outfit', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: var(--font-body);
+    background-color: var(--sky-top);
+    color: #fff;
+    touch-action: manipulation;
+}
+
+/* =================================================================
+   FONDO CANVAS DE ATARDECER & SOL
+   ================================================================= */
+
+#sunsetCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.sunset-sun-container {
+    position: fixed;
+    bottom: 22%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+    height: 220px;
+    z-index: 2;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sun {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, var(--sun-gold) 45%, var(--sun-amber) 100%);
+    box-shadow: 
+        0 0 60px var(--sun-gold),
+        0 0 120px var(--sun-amber),
+        0 0 180px rgba(255, 94, 54, 0.6);
+    animation: sunPulse 6s ease-in-out infinite alternate;
+}
+
+@keyframes sunPulse {
+    0% { transform: scale(1); box-shadow: 0 0 60px var(--sun-gold), 0 0 120px var(--sun-amber); }
+    100% { transform: scale(1.08); box-shadow: 0 0 90px var(--sun-gold), 0 0 160px var(--sun-amber), 0 0 220px rgba(255, 120, 50, 0.8); }
+}
+
+.horizon-glow {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 35vh;
+    background: linear-gradient(to top, rgba(255, 94, 54, 0.4), rgba(255, 190, 11, 0.2), transparent);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* =================================================================
+   CONTENEDOR PRINCIPAL Y HEADER
+   ================================================================= */
+
+.app-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 15px 80px 15px;
+}
+
+.stage-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.badge-stage {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 22px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flower-icon {
+    font-size: 1.4rem;
+    animation: spinSlow 12s linear infinite;
+}
+
+@keyframes spinSlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.stage-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.stage-progress-bar {
+    width: 180px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffcc00, #ff4d6d);
+    border-radius: 10px;
+    transition: width 0.3s ease-out;
+}
+
+/* =================================================================
+   ESCENARIO CANVASES DE FLORES Y RAMO
+   ================================================================= */
+
+.flower-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 6;
+    pointer-events: none;
+}
+
+#flowerCanvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* =================================================================
+   SOBRE INTERACTIVO 3D
+   ================================================================= */
+
+.envelope-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -45%);
+    z-index: 10;
+    cursor: pointer;
+    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.envelope-container.hidden {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.7);
+    pointer-events: none;
+}
+
+.envelope-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    perspective: 1000px;
+}
+
+.envelope {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    background-color: var(--envelope-color);
+    border-radius: 12px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.4),
+        0 0 25px rgba(255, 190, 11, 0.3);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.envelope-wrapper:hover .envelope, .envelope-wrapper:active .envelope {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 
+        0 22px 45px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(255, 190, 11, 0.6);
+}
+
+/* Solapas y Bolsillos del Sobre */
+.back-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ebdcc0;
+    border-radius: 12px;
+}
+
+.letter-preview {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    height: 75%;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.preview-line {
+    height: 6px;
+    background: #e2e2e2;
+    border-radius: 3px;
+}
+.preview-line.short { width: 60%; }
+
+.pocket {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #f5e3c3 0%, #eadabe 100%);
+    clip-path: polygon(0% 100%, 50% 45%, 100% 100%);
+    border-radius: 0 0 12px 12px;
+    z-index: 3;
+}
+
+.top-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #fdf0d5 0%, #ebdcc0 100%);
+    clip-path: polygon(0 0, 50% 52%, 100% 0);
+    transform-origin: top center;
+    transition: transform 0.6s ease-in-out, z-index 0.6s;
+    z-index: 4;
+}
+
+/* Sello de Cera */
+.wax-seal {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    background: radial-gradient(circle at 35% 35%, #d90429, #9e2a2b 75%, #590d22 100%);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 
+        0 4px 10px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,255,255,0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.6);
+    z-index: 5;
+    border: 2px dashed rgba(255, 215, 0, 0.6);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.seal-icon {
+    font-size: 1.3rem;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+}
+
+.envelope-wrapper:hover .wax-seal, .envelope-wrapper:active .wax-seal {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Animación de Apertura del Sobre */
+.envelope.open .top-flap {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.envelope.open .wax-seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+}
+
+.envelope.open .letter-preview {
+    transform: translateX(-50%) translateY(-70px);
+}
+
+/* Indicación flotante debajo del sobre */
+.envelope-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    animation: bounceGentle 2s ease-in-out infinite;
+}
+
+.hint-text {
+    font-size: 0.95rem;
+    color: #ffea00;
+    font-weight: 500;
+    text-shadow: 0 0 10px rgba(255, 234, 0, 0.6);
+}
+
+@keyframes bounceGentle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+/* =================================================================
+   MODAL DE LA CARTA DESPLEGADA & ANIMACIONES DE APERTURA / CIERRE
+   ================================================================= */
+
+.letter-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: opacity 0.5s ease;
+}
+
+.letter-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 5, 25, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: opacity 0.5s ease;
+}
+
+.letter-paper {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    max-height: 85vh;
+    background: linear-gradient(135deg, #fffdf7 0%, #fdf8eb 100%);
+    color: var(--text-primary);
+    border-radius: 16px;
+    padding: 45px 40px;
+    box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(255, 190, 11, 0.25);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    overflow-y: auto;
+    transform: scale(0.9) translateY(30px);
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-gold) transparent;
+}
+
+/* Estado Activo: Carta Abierta */
+.letter-modal:not(.hidden):not(.closing) .letter-paper {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Animación de CIERRE Elegante de la Carta hacia el Sobre */
+.letter-modal.closing .letter-paper {
+    transform: scale(0.2) translateY(180px) rotate(-4deg);
+    opacity: 0;
+    transition: transform 0.55s cubic-bezier(0.5, 0, 0.25, 1), opacity 0.45s ease;
+}
+
+.letter-modal.closing .modal-backdrop {
+    opacity: 0;
+    transition: opacity 0.55s ease;
+}
+
+/* Decoraciones en Esquinas */
+.corner-decor {
+    position: absolute;
+    font-size: 1.3rem;
+    opacity: 0.7;
+}
+.top-left { top: 15px; left: 18px; }
+.top-right { top: 15px; right: 18px; }
+.bottom-left { bottom: 15px; left: 18px; }
+.bottom-right { bottom: 15px; right: 18px; }
+
+/* Botón Cerrar Carta */
+.close-letter-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.06);
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-secondary);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s, transform 0.2s;
+    z-index: 10;
+}
+
+.close-letter-btn:hover, .close-letter-btn:active {
+    background: rgba(230, 57, 70, 0.15);
+    color: var(--rose-red);
+    transform: rotate(90deg);
+}
+
+/* Encabezado y Texto de la Carta */
+.letter-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.letter-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.letter-recipient {
+    font-family: var(--font-handwriting);
+    font-size: 2.8rem;
+    color: #9e2a2b;
+    margin: 8px 0;
+    line-height: 1.1;
+}
+
+.letter-divider {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    color: var(--accent-gold);
+    font-size: 0.8rem;
+    margin-top: 10px;
+}
+
+.letter-title {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    text-align: center;
+    color: #4a154b;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.letter-body {
+    font-family: var(--font-script);
+    font-size: 1.6rem;
+    line-height: 1.6;
+    color: #2b1e1a;
+    white-space: pre-line;
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+.letter-footer {
+    text-align: right;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(127, 85, 57, 0.3);
+}
+
+.letter-signature-text {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.letter-sender-name {
+    font-family: var(--font-handwriting);
+    font-size: 2.4rem;
+    color: #9e2a2b;
+    margin-top: 4px;
+}
+
+/* =================================================================
+   ÚNICO BOTÓN FLOTANTE DE MÚSICA
+   ================================================================= */
+
+.controls-bar {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.control-btn.music-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(20, 10, 30, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 190, 11, 0.2);
+    transition: all 0.3s ease;
+}
+
+.control-btn.music-btn:hover, .control-btn.music-btn:active {
+    background: rgba(35, 15, 50, 0.8);
+    transform: translateY(-2deg) scale(1.03);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 190, 11, 0.4);
+}
+
+/* =================================================================
+   OPTIMIZACIÓN RESPONSIVA PARA TELÉFONOS MÓVILES (MOBILE VIEWPORT)
+   ================================================================= */
+
+@media (max-width: 600px) {
+    .stage-header {
+        margin-top: 5px;
+    }
+
+    .badge-stage {
+        padding: 8px 18px;
+        gap: 8px;
+    }
+
+    .stage-text {
+        font-size: 0.95rem;
+    }
+
+    .stage-progress-bar {
+        width: 140px;
+        height: 4px;
+    }
+
+    .sunset-sun-container {
+        bottom: 25%;
+        width: 160px;
+        height: 160px;
+    }
+
+    .sun {
+        width: 100px;
+        height: 100px;
+    }
+
+    .envelope {
+        width: 260px;
+        height: 175px;
+    }
+
+    .envelope-hint {
+        padding: 6px 14px;
+    }
+
+    .hint-text {
+        font-size: 0.85rem;
+    }
+
+    .letter-modal {
+        padding: 12px;
+    }
+
+    .letter-paper {
+        padding: 30px 20px 25px 20px;
+        max-height: 88vh;
+        border-radius: 12px;
+    }
+
+    .letter-recipient {
+        font-size: 2.2rem;
+    }
+
+    .letter-title {
+        font-size: 1.25rem;
+        margin-bottom: 14px;
+    }
+
+    .letter-body {
+        font-size: 1.35rem;
+        line-height: 1.5;
+        padding: 0;
+    }
+
+    .letter-sender-name {
+        font-size: 2rem;
+    }
+
+    .controls-bar {
+        bottom: 18px;
+        width: 90%;
+    }
+
+    .control-btn.music-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 18px;
+        font-size: 0.88rem;
+    }
+}
