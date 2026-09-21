@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(animate);
 
     function finishFlowerSequence() {
-        stageText.textContent = "¡Tu Carta está Lista! ✉️";
+        stageText.textContent = "¡Está carta es para ti Val!✉️";
         stageIcon.textContent = "💖";
         progressFill.style.width = "100%";
         envelopeContainer.classList.remove('hidden');
